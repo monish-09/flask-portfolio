@@ -1,0 +1,54 @@
+<section class="hero" id="home">
+
+    <div class="left">
+
+        <p class="hello">👋 Hello, I'm</p>
+
+        <h1>Monish <span>Khan</span></h1>
+
+        <h2>
+            <span id="typing"></span>
+        </h2>
+
+        <p class="description">
+            Passionate Python & Flask Developer who enjoys building modern,
+            responsive and user-friendly web applications.
+        </p>
+
+        <div class="hero-btn">
+
+            <a href="{{ url_for('static', filename='resume.pdf') }}" download>
+                <button>Download Resume</button>
+            </a>
+
+            <a href="#contact">
+                <button>Contact Me</button>
+            </a>
+
+        </div>
+
+        <div class="social-icons">
+
+            <a href="https://github.com/yourusername" target="_blank">
+                <i class="fa-brands fa-github"></i>
+            </a>
+
+            <a href="https://linkedin.com/in/yourusername" target="_blank">
+                <i class="fa-brands fa-linkedin"></i>
+            </a>
+
+            <a href="mailto:youremail@gmail.com">
+                <i class="fa-solid fa-envelope"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="right">
+
+        <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile">
+
+    </div>
+
+</section>

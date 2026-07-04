@@ -1,0 +1,79 @@
+from flask import Flask, render_template, request, flash
+from database import get_connection
+
+app = Flask(__name__)
+app.secret_key = "portfolio"
+
+
+@app.route("/")
+def home():
+
+    conn = get_connection()
+
+    if conn.is_connected():
+        print("✅ Database Connected Successfully!")
+
+    conn.close()
+
+    return render_template("index.html")
+
+
+@app.route("/contact", methods=["POST"])
+def contact():
+
+    name = request.form["name"].strip()
+    email = request.form["email"].strip()
+    subject = request.form["subject"].strip()
+    message = request.form["message"].strip()
+
+    # Validation
+    if not name or not email or not subject or not message:
+        flash("❌ Please fill all the fields!", "error")
+        return render_template("index.html")
+
+    if len(message) < 10:
+        flash("❌ Message should contain at least 10 characters.", "error")
+        return render_template("index.html")
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    sql = """
+    INSERT INTO contact_messages(name,email,subject,message)
+    VALUES(%s,%s,%s,%s)
+    """
+
+    cursor.execute(sql, (name, email, subject, message))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash("✅ Thank you! Your message has been sent successfully.", "success")
+
+    return render_template("index.html")
+
+
+
+
+@app.route("/admin")
+def admin():
+
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT * FROM contact_messages
+        ORDER BY created_at DESC
+    """)
+
+    messages = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("admin.html", messages=messages)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

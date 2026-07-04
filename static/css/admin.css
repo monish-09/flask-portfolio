@@ -1,0 +1,47 @@
+body{
+
+    background:#111;
+    color:white;
+    font-family:Arial;
+    padding:40px;
+
+}
+
+h1{
+
+    color:#00d4ff;
+    margin-bottom:30px;
+
+}
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+    background:#1c1c1c;
+
+}
+
+th{
+
+    background:#00d4ff;
+    color:#111;
+
+    padding:15px;
+
+}
+
+td{
+
+    padding:15px;
+
+    border-bottom:1px solid #333;
+
+}
+
+tr:hover{
+
+    background:#222;
+
+}
