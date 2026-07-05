@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from database import get_connection
 
 app = Flask(__name__)
-app.secret_key = "portfolio"
+app.secret_key = "portfolio_secret"
 
 
 @app.route("/")
@@ -58,6 +58,8 @@ def contact():
 
 @app.route("/admin")
 def admin():
+    if "admin" not in session:
+        return redirect(url_for("login"))
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -73,6 +75,35 @@ def admin():
     conn.close()
 
     return render_template("admin.html", messages=messages)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == "admin" and password == "admin123":
+
+            session["admin"] = True
+
+            return redirect(url_for("admin"))
+
+        flash("Invalid Username or Password", "error")
+
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+
+    session.pop("admin", None)
+
+    return redirect(url_for("login"))
+
+
 
 
 if __name__ == "__main__":
