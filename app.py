@@ -58,23 +58,43 @@ def contact():
 
 @app.route("/admin")
 def admin():
+
     if "admin" not in session:
         return redirect(url_for("login"))
+
+    search = request.args.get("search", "").strip()
 
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("""
-        SELECT * FROM contact_messages
-        ORDER BY created_at DESC
-    """)
+    if search:
+
+        cursor.execute("""
+            SELECT *
+            FROM contact_messages
+            WHERE name LIKE %s OR email LIKE %s
+            ORDER BY created_at DESC
+        """, (f"%{search}%", f"%{search}%"))
+
+    else:
+
+        cursor.execute("""
+            SELECT *
+            FROM contact_messages
+            ORDER BY created_at DESC
+        """)
 
     messages = cursor.fetchall()
+    total_messages = len(messages)
 
     cursor.close()
     conn.close()
 
-    return render_template("admin.html", messages=messages)
+    return render_template(
+    "admin.html",
+    messages=messages,
+    total_messages=total_messages
+)
 
 
 @app.route("/delete/<int:id>")
