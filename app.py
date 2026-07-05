@@ -77,6 +77,27 @@ def admin():
     return render_template("admin.html", messages=messages)
 
 
+@app.route("/delete/<int:id>")
+def delete_message(id):
+
+    if "admin" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM contact_messages WHERE id=%s", (id,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    flash("Message deleted successfully!", "success")
+
+    return redirect(url_for("admin"))
+
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 

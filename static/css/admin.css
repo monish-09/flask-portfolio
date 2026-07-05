@@ -45,3 +45,24 @@ tr:hover{
     background:#222;
 
 }
+
+.delete-btn{
+
+    background:#dc3545;
+    color:white;
+
+    padding:8px 15px;
+
+    border-radius:6px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.delete-btn:hover{
+
+    background:#bb2d3b;
+
+}
