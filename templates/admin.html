@@ -39,8 +39,8 @@
     </div>
 
     <div class="card">
-        <h3>🔍 Search Results</h3>
-        <p>{{ messages|length }}</p>
+        <h3>📅 Today's Messages</h3>
+        <p>{{ today_messages }}</p>
     </div>
 
     <div class="card">
@@ -49,6 +49,7 @@
     </div>
 
 </div>
+
 
 <table>
 
@@ -72,7 +73,15 @@
             <td>{{ msg.name }}</td>
             <td>{{ msg.email }}</td>
             <td>{{ msg.subject }}</td>
-            <td>{{ msg.message }}</td>
+            <td>
+                {{ msg.message[:50] }}{% if msg.message|length > 50 %}...{% endif %}
+                    <br><br>
+                    <button class="view-btn"
+                    onclick="showMessage(`{{ msg.message }}`)">
+                        👁 View
+                </button>
+
+            </td>
             <td>{{ msg.created_at }}</td>
 
             <td>
@@ -98,6 +107,22 @@
     {% endif %}
 
 </table>
+
+<div id="messageModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <h2>📩 Full Message</h2>
+
+        <p id="fullMessage"></p>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 
 </body>
 </html>

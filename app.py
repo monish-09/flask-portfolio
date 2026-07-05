@@ -67,6 +67,19 @@ def admin():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Total Messages
+    cursor.execute("SELECT COUNT(*) AS total FROM contact_messages")
+    total_messages = cursor.fetchone()["total"]
+
+    # Today's Messages
+    cursor.execute("""
+        SELECT COUNT(*) AS today
+        FROM contact_messages
+        WHERE DATE(created_at) = CURDATE()
+    """)
+    today_messages = cursor.fetchone()["today"]
+
+    # Search
     if search:
 
         cursor.execute("""
@@ -85,16 +98,16 @@ def admin():
         """)
 
     messages = cursor.fetchall()
-    total_messages = len(messages)
 
     cursor.close()
     conn.close()
 
     return render_template(
-    "admin.html",
-    messages=messages,
-    total_messages=total_messages
-)
+        "admin.html",
+        messages=messages,
+        total_messages=total_messages,
+        today_messages=today_messages
+    )
 
 
 @app.route("/delete/<int:id>")
