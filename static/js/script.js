@@ -50,3 +50,42 @@ if (menu && nav) {
         nav.classList.toggle("active");
     });
 }
+
+// =======================
+// Dark / Light Mode
+// =======================
+
+const themeToggle = document.getElementById("theme-toggle");
+const themeIcon = themeToggle.querySelector("i");
+
+// Saved theme
+if (localStorage.getItem("theme") === "light") {
+
+    document.body.classList.add("light-theme");
+
+    themeIcon.classList.remove("fa-moon");
+    themeIcon.classList.add("fa-sun");
+
+}
+
+themeToggle.addEventListener("click", () => {
+
+    document.body.classList.toggle("light-theme");
+
+    if(document.body.classList.contains("light-theme")){
+
+        localStorage.setItem("theme","light");
+
+        themeIcon.classList.remove("fa-moon");
+        themeIcon.classList.add("fa-sun");
+
+    }else{
+
+        localStorage.setItem("theme","dark");
+
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-moon");
+
+    }
+
+});

@@ -318,3 +318,31 @@ tr:hover{
     color:#00d4ff;
 
 }
+
+.export-btn{
+
+    display:inline-block;
+
+    margin-bottom:25px;
+
+    background:#198754;
+
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.export-btn:hover{
+
+    background:#157347;
+
+}

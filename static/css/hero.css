@@ -1,86 +1,126 @@
 .hero{
+
     display:flex;
     justify-content:space-between;
     align-items:center;
     min-height:90vh;
+
 }
 
 .left{
+
     max-width:600px;
+
 }
 
 .hello{
-    color:#00d4ff;
+
+    color:var(--primary);
     font-size:22px;
     margin-bottom:10px;
+
 }
 
 .left h1{
-    font-size:60px;
-    margin-bottom:15px;
-}
 
-.left span{
-    color:#00d4ff;
-}
-
-.left h2{
-    font-size:32px;
-    margin-bottom:20px;
-    color:white;
-}
-
-.description{
-    line-height:1.8;
-    color:#ccc;
-    margin-bottom:30px;
-}
-
-.hero-btn{
-    display:flex;
-    gap:15px;
-    margin-bottom:30px;
-}
-
-.social-icons a{
-    color:white;
-    font-size:28px;
-    margin-right:20px;
-    transition:.3s;
-}
-
-.social-icons a:hover{
-    color:#00d4ff;
-}
-
-.right img{
-    width:350px;
-    border-radius:50%;
-    border:5px solid #00d4ff;
-    box-shadow:0 0 30px rgba(0,212,255,.5);
-}
-
-.left h1{
     font-size:68px;
     font-weight:700;
     line-height:1.2;
+    margin-bottom:15px;
+
+    color:var(--text-color);
+
 }
 
-button{
-    background:#00d4ff;
+.left span{
+
+    color:var(--primary);
+
+}
+
+.left h2{
+
+    font-size:32px;
+    margin-bottom:20px;
+
+    color:var(--primary);
+
+}
+
+.description{
+
+    line-height:1.8;
+    color:var(--text-color);
+    opacity:.8;
+    margin-bottom:30px;
+
+}
+
+.hero-btn{
+
+    display:flex;
+    gap:15px;
+    margin-bottom:30px;
+
+}
+
+.hero-btn button{
+
+    background:var(--primary);
     color:#111;
+    border:none;
     border-radius:30px;
     padding:15px 35px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+
+}
+
+.hero-btn button:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.social-icons a{
+
+    color:var(--text-color);
+    font-size:28px;
+    margin-right:20px;
+    transition:.3s;
+
+}
+
+.social-icons a:hover{
+
+    color:var(--primary);
+
+}
+
+.right img{
+
+    width:350px;
+    border-radius:50%;
+    border:5px solid var(--primary);
+    box-shadow:0 0 30px rgba(0,212,255,.5);
+
 }
 
 #typing::after{
-    content: "|";
-    color:#00d4ff;
-    animation: blink .7s infinite;
+
+    content:"|";
+    color:var(--primary);
+    animation:blink .7s infinite;
+
 }
 
 @keyframes blink{
+
     50%{
+
         opacity:0;
+
     }
+
 }

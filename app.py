@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session,Response
 from database import get_connection
+import csv
 
 app = Flask(__name__)
 app.secret_key = "portfolio_secret"
@@ -158,7 +159,43 @@ def logout():
     return redirect(url_for("login"))
 
 
+@app.route("/export")
+def export_csv():
 
+    if "admin" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id, name, email, subject, message, created_at
+        FROM contact_messages
+        ORDER BY created_at DESC
+    """)
+
+    messages = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    def generate():
+
+        data = csv.writer
+
+        yield "ID,Name,Email,Subject,Message,Date\n"
+
+        for msg in messages:
+
+            yield f'{msg["id"]},"{msg["name"]}","{msg["email"]}","{msg["subject"]}","{msg["message"]}","{msg["created_at"]}"\n'
+
+    return Response(
+        generate(),
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=messages.csv"
+        }
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
