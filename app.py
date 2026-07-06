@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_connection
 import csv
+import math
 
 app = Flask(__name__)
 app.secret_key = "portfolio_secret"
@@ -66,6 +67,10 @@ def admin():
 
     search = request.args.get("search", "").strip()
 
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -85,31 +90,38 @@ def admin():
     if search:
 
         cursor.execute("""
-            SELECT *
-            FROM contact_messages
-            WHERE name LIKE %s OR email LIKE %s
-            ORDER BY created_at DESC
-        """, (f"%{search}%", f"%{search}%"))
+        SELECT *
+        FROM contact_messages
+        WHERE name LIKE %s OR email LIKE %s
+        ORDER BY created_at DESC
+        LIMIT %s OFFSET %s
+        """, (f"%{search}%", f"%{search}%", per_page, offset))
 
     else:
 
-        cursor.execute("""
-            SELECT *
-            FROM contact_messages
-            ORDER BY created_at DESC
-        """)
+       cursor.execute("""
+        SELECT *
+        FROM contact_messages
+        ORDER BY created_at DESC
+        LIMIT %s OFFSET %s
+        """, (per_page, offset))
 
     messages = cursor.fetchall()
+
+    total_pages = math.ceil(total_messages / per_page)
 
     cursor.close()
     conn.close()
 
     return render_template(
-        "admin.html",
-        messages=messages,
-        total_messages=total_messages,
-        today_messages=today_messages
-    )
+    "admin.html",
+    messages=messages,
+    total_messages=total_messages,
+    today_messages=today_messages,
+    page=page,
+    total_pages=total_pages,
+    search=search
+)
 
 
 @app.route("/delete/<int:id>")
