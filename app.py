@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session,Response
+from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_connection
 import csv
 
@@ -140,10 +141,22 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        if username == "admin" and password == "admin123":
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT * FROM admin WHERE username=%s",
+            (username,)
+        )
+
+        admin = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if admin and check_password_hash(admin["password"], password):
 
             session["admin"] = True
-
             return redirect(url_for("admin"))
 
         flash("Invalid Username or Password", "error")
