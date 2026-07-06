@@ -6,34 +6,88 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
 
-<div class="top-bar">
+<div class="dashboard-header">
 
-    <h1>📩 Contact Messages</h1>
+    <div class="dashboard-title">
 
-    <a href="{{ url_for('logout') }}" class="logout-btn">
-        🔓 Logout
-    </a>
+        <div class="dashboard-icon">
+            <i class="fa-solid fa-user-shield"></i>
+        </div>
+
+        <div>
+
+            <h1>Admin Dashboard</h1>
+            <p>Manage Contact Messages Securely</p>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-actions">
+
+        <a href="{{ url_for('profile') }}" class="profile-btn">
+            <i class="fa-solid fa-user"></i>
+            Profile
+        </a>
+
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Logout
+        </a>
+
+    </div>
 
 </div>
 
-<form method="GET" action="{{ url_for('admin') }}" class="search-form">
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
 
-    <input type="text"
-           name="search"
-            placeholder="🔍 Search by Name or Email"
-           value="{{ request.args.get('search','') }}">
+<div class="dashboard-tools">
 
-    <button type="submit">Search</button>
+    <form method="GET" action="{{ url_for('admin') }}" class="search-form">
 
-</form>
+        <div class="search-box">
 
-<a href="{{ url_for('export_csv') }}" class="export-btn">
-    📥 Export CSV
-</a>
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search by Name or Email"
+                value="{{ request.args.get('search','') }}">
+
+        </div>
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+    <a href="{{ url_for('export_csv') }}" class="export-btn">
+
+        <i class="fa-solid fa-file-csv"></i>
+
+        Export CSV
+
+    </a>
+
+</div>
 
 <div class="dashboard-cards">
 
@@ -49,82 +103,107 @@
 
     <div class="card">
         <h3>👤 Logged In</h3>
-        <p>Admin</p>
+        <p>{{ username }}</p>
     </div>
 
 </div>
 
+<div class="table-container">
 
-<table>
-
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Subject</th>
-        <th>Message</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-
-    {% if messages %}
-
-        {% for msg in messages %}
+    <table>
 
         <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
 
-            <td>{{ msg.id }}</td>
-            <td>{{ msg.name }}</td>
-            <td>{{ msg.email }}</td>
-            <td>{{ msg.subject }}</td>
-            <td>
-                {{ msg.message[:50] }}{% if msg.message|length > 50 %}...{% endif %}
+        {% if messages %}
+
+            {% for msg in messages %}
+
+            <tr>
+
+                <td>{{ msg.id }}</td>
+                <td>{{ msg.name }}</td>
+                <td>{{ msg.email }}</td>
+                <td>{{ msg.subject }}</td>
+
+                <td>
+
+                    {{ msg.message[:50] }}
+                    {% if msg.message|length > 50 %}...{% endif %}
+
                     <br><br>
-                    <button class="view-btn"
-                    onclick="showMessage(`{{ msg.message }}`)">
+
+                    <button
+                        class="view-btn"
+                        onclick="showMessage(`{{ msg.message }}`)">
+
                         👁 View
-                </button>
 
-            </td>
-            <td>{{ msg.created_at }}</td>
+                    </button>
 
-            <td>
-                <a href="{{ url_for('delete_message', id=msg.id) }}"
-                   class="delete-btn"
-                   onclick="return confirm('Are you sure you want to delete this message?')">
-                    🗑 Delete
-                </a>
-            </td>
+                </td>
 
-        </tr>
+                <td>{{ msg.created_at }}</td>
 
-        {% endfor %}
+                <td>
 
-    {% else %}
+                    <a
+                        href="{{ url_for('delete_message', id=msg.id) }}"
+                        class="delete-btn"
+                        onclick="return confirm('Are you sure you want to delete this message?')">
 
-        <tr>
-            <td colspan="7" style="text-align:center; padding:20px;">
-                📭 No messages found.
-            </td>
-        </tr>
+                        🗑 Delete
 
-    {% endif %}
+                    </a>
 
-</table>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        {% else %}
+
+            <tr>
+
+                <td colspan="7" style="text-align:center;padding:20px;">
+
+                    📭 No messages found.
+
+                </td>
+
+            </tr>
+
+        {% endif %}
+
+    </table>
+
+</div>
 
 <div class="pagination">
 
     {% if page > 1 %}
+
         <a href="{{ url_for('admin', page=page-1, search=search) }}">
             ⬅ Previous
         </a>
+
     {% endif %}
 
     {% for p in range(1, total_pages + 1) %}
 
         {% if p == page %}
 
-            <span class="active">{{ p }}</span>
+            <span class="active">
+                {{ p }}
+            </span>
 
         {% else %}
 
@@ -137,9 +216,11 @@
     {% endfor %}
 
     {% if page < total_pages %}
+
         <a href="{{ url_for('admin', page=page+1, search=search) }}">
             Next ➡
         </a>
+
     {% endif %}
 
 </div>
@@ -148,7 +229,11 @@
 
     <div class="modal-content">
 
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeModal()">
+
+            &times;
+
+        </span>
 
         <h2>📩 Full Message</h2>
 
