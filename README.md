@@ -1,77 +1,44 @@
-# 🚀 Flask Portfolio Website
+# Flask Portfolio Website
 
-A modern **Flask Portfolio Website** built with **Flask, MySQL, HTML, CSS, and JavaScript**. The project includes a secure **Admin Dashboard** for managing contact messages with OTP-based password reset and a responsive user interface.
+A modern and responsive portfolio website built with **Flask**. This project includes a secure admin panel to manage contact messages, email notifications, OTP-based password reset, and SQLite database integration.
 
 ---
 
-# ✨ Features
+## Features
 
-## 🌐 Portfolio Website
-- Responsive Design
-- Dark / Light Mode
-- About Section
-- Skills Section
-- Projects Section
+- Responsive Portfolio Website
 - Contact Form
-
-## 🔐 Admin Authentication
+- Email Notification on New Contact Submission
 - Secure Admin Login
-- Password Hashing
-- Show / Hide Password
-- Forgot Password via Email OTP
-- OTP Verification
-- OTP Expiry (5 Minutes)
-- Reset Password
-- Change Username
-- Change Password
-- Logout
-
-## 📩 Contact Management
-- Store Contact Messages
-- View Full Message
+- Admin Dashboard
+- Search Contact Messages
 - Delete Messages
-- Search by Name or Email
-- Pagination
-- Export Messages as CSV
-
-## 🎨 UI Features
-- Premium Authentication UI
-- Modern Admin Dashboard
-- Responsive Layout
+- Export Messages to CSV
+- Admin Profile Update
+- Forgot Password with Email OTP Verification
+- Password Reset
+- SQLite Database
 - Flash Messages
-- Password Visibility Toggle
+- Responsive UI
 
 ---
 
-# 🛠 Tech Stack
+## Tech Stack
 
-### Backend
 - Python
 - Flask
-
-### Frontend
+- SQLite
 - HTML5
 - CSS3
 - JavaScript
-
-### Database
-- MySQL
-
-### Email Service
-- Gmail SMTP
+- Jinja2
 
 ---
 
-# 📂 Project Structure
+## Project Structure
 
-```text
-portfolio/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-├── .env
+```
+flask-portfolio/
 │
 ├── static/
 │   ├── css/
@@ -80,52 +47,41 @@ portfolio/
 │
 ├── templates/
 │
-└── database/
+├── app.py
+├── database.py
+├── create_db.py
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
 ---
 
-# ⚙ Installation
+## Installation
 
-Clone the repository
-
-```bash
-git clone https://github.com/monish-09/portfolio.git
-```
-
-Move into the project folder
+Clone the repository:
 
 ```bash
-cd portfolio
+git clone https://github.com/monish-09/flask-portfolio.git
+
+cd flask-portfolio
 ```
 
-Create a virtual environment
-
-```bash
-python -m venv venv
-```
-
-Activate the environment
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-### Linux / macOS
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the project
+Create the database:
+
+```bash
+python create_db.py
+```
+
+Create an admin account before running the application.
+
+Start the application:
 
 ```bash
 python app.py
@@ -133,38 +89,54 @@ python app.py
 
 ---
 
-# 🔑 Environment Variables
+## Environment Variables
 
-Create a `.env` file and add:
+Create a `.env` file in the project root.
+
+Example:
 
 ```env
-SECRET_KEY=your_secret_key
-
 EMAIL_USER=your_email@gmail.com
-
 EMAIL_PASSWORD=your_app_password
-
-DB_HOST=localhost
-
-DB_USER=root
-
-DB_PASSWORD=your_password
-
-DB_NAME=portfolio
+SECRET_KEY=your_secret_key
 ```
 
----
-
-# 📌 Future Improvements
-
-- Activity Logs
-- Multi Admin Support
-- Dashboard Analytics
-- Docker Support
+> **Note:** Never upload your `.env` file to GitHub.
 
 ---
 
-# 👨‍💻 Author
+## Database
+
+This project uses **SQLite** as the database.
+
+Tables:
+
+- admin
+- contact_messages
+
+---
+
+## Security Features
+
+- Password Hashing
+- Session Authentication
+- OTP Verification
+- Password Reset
+- Protected Admin Routes
+
+---
+
+## Future Improvements
+
+- Dark Mode
+- Admin Activity Logs
+- Message Reply System
+- Image Upload Support
+- Multiple Admin Accounts
+
+---
+
+## Author
 
 **Monish**
 
@@ -173,6 +145,6 @@ https://github.com/monish-09
 
 ---
 
-# ⭐ Support
+## License
 
-If you like this project, consider giving it a **Star ⭐** on GitHub.
+This project is created for learning and portfolio purposes.
