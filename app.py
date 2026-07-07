@@ -10,13 +10,14 @@ from email.mime.text import MIMEText
 from dotenv import load_dotenv
 import random
 import time
+import requests
 
 
 load_dotenv()
 
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
 BREVO_EMAIL = os.getenv("BREVO_EMAIL")
-BREVO_LOGIN = os.getenv("BREVO_LOGIN")
-BREVO_SMTP_KEY = os.getenv("BREVO_SMTP_KEY")
+
 
 
 app = Flask(__name__)
@@ -42,29 +43,35 @@ Message:
 {message}
 """
 
-    msg = MIMEText(body)
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
 
-    msg["Subject"] = "New Portfolio Contact"
-    msg["From"] = BREVO_EMAIL
-    msg["To"] = BREVO_EMAIL
+    payload = {
+        "sender": {
+            "name": "Portfolio Website",
+            "email": BREVO_EMAIL
+        },
+        "to": [
+            {
+                "email": BREVO_EMAIL
+            }
+        ],
+        "subject": "New Portfolio Contact",
+        "textContent": body
+    }
 
-    try:
-        server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
+    response = requests.post(
+        "https://api.brevo.com/v3/smtp/email",
+        json=payload,
+        headers=headers,
+        timeout=30
+    )
 
-        server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
-
-        server.send_message(msg)
-
-        server.quit()
-
-        print("✅ Email Sent Successfully")
-
-    except Exception as e:
-
-        print("❌ Email Error:", e)
+    print(response.status_code)
+    print(response.text)
 
 @app.route("/contact", methods=["POST"])
 def contact():
@@ -345,35 +352,52 @@ This OTP is valid for 5 minutes.
 Do not share this OTP with anyone.
 """
 
-        msg = MIMEText(body)
+        headers = {
+            "accept": "application/json",
+            "api-key": BREVO_API_KEY,
+            "content-type": "application/json"
+        }
 
-        msg["Subject"] = "Password Reset OTP"
-        msg["From"] = BREVO_EMAIL
-        msg["To"] = email
+        payload = {
+            "sender": {
+                "name": "Portfolio Website",
+                "email": BREVO_EMAIL
+            },
+            "to": [
+                {
+                    "email": email
+                }
+            ],
+            "subject": "Password Reset OTP",
+            "textContent": body
+        }
 
         try:
 
-            print("1. Connecting with SSL...")
+            response = requests.post(
+                "https://api.brevo.com/v3/smtp/email",
+                json=payload,
+                headers=headers,
+                timeout=30
+            )
 
-            server = smtplib.SMTP_SSL("smtp-relay.brevo.com", 465, timeout=30)
+            print("Status Code:", response.status_code)
+            print("Response:", response.text)
 
-            print("2. Connected")
+            if response.status_code not in [200, 201, 202]:
 
-            server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
+                flash("Unable to send OTP.", "error")
 
-            print("3. Login OK")
+                cursor.close()
+                conn.close()
 
-            server.send_message(msg)
-
-            print("4. Email Sent")
-
-            server.quit()
+                return render_template("forgot_password.html")
 
         except Exception as e:
 
-            flash("Unable to send OTP.", "error")
+            print("❌ Brevo API Error:", e)
 
-            print("❌ Brevo Error:", e)
+            flash("Unable to send OTP.", "error")
 
             cursor.close()
             conn.close()
@@ -509,13 +533,12 @@ def verify_otp():
 def resend_otp():
 
     if "reset_email" not in session:
-
         flash("Session expired. Please try again.", "error")
         return redirect(url_for("forgot_password"))
 
     email = session["reset_email"]
 
-    otp = str(random.randint(100000,999999))
+    otp = str(random.randint(100000, 999999))
 
     session["otp"] = otp
     session["otp_time"] = time.time()
@@ -532,31 +555,46 @@ This OTP is valid for 5 minutes.
 Do not share this OTP with anyone.
 """
 
-    msg = MIMEText(body)
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
 
-    msg["Subject"] = "New Password Reset OTP"
-    msg["From"] = BREVO_EMAIL
-    msg["To"] = email
+    payload = {
+        "sender": {
+            "name": "Portfolio Website",
+            "email": BREVO_EMAIL
+        },
+        "to": [
+            {
+                "email": email
+            }
+        ],
+        "subject": "New Password Reset OTP",
+        "textContent": body
+    }
 
     try:
 
-        server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
-        server.ehlo()
-        server.starttls()
-        server.ehlo()
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            json=payload,
+            headers=headers,
+            timeout=30
+        )
 
-        server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
+        print(response.status_code)
+        print(response.text)
 
-        server.send_message(msg)
-
-        server.quit()
-
-        flash("A new OTP has been sent to your email.", "success")
+        if response.status_code in [200, 201, 202]:
+            flash("A new OTP has been sent to your email.", "success")
+        else:
+            flash("Unable to resend OTP.", "error")
 
     except Exception as e:
 
-        print("❌ Brevo Error:", e)
-
+        print("❌ Brevo API Error:", e)
         flash("Unable to resend OTP.", "error")
 
     return redirect(url_for("verify_otp"))
