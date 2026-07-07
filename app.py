@@ -15,6 +15,7 @@ import time
 load_dotenv()
 
 BREVO_EMAIL = os.getenv("BREVO_EMAIL")
+BREVO_LOGIN = os.getenv("BREVO_LOGIN")
 BREVO_SMTP_KEY = os.getenv("BREVO_SMTP_KEY")
 
 
@@ -53,7 +54,7 @@ Message:
         server.starttls()
         server.ehlo()
 
-        server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
+        server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
 
         server.send_message(msg)
 
@@ -357,7 +358,7 @@ Do not share this OTP with anyone.
             server.starttls()
             server.ehlo()
 
-            server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
+            server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
 
             server.send_message(msg)
 
@@ -538,7 +539,7 @@ Do not share this OTP with anyone.
         server.starttls()
         server.ehlo()
 
-        server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
+        server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
 
         server.send_message(msg)
 
