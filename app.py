@@ -324,7 +324,7 @@ def forgot_password():
 
             return render_template("forgot_password.html")
 
-        otp = str(random.randint(100000,999999))
+        otp = str(random.randint(100000, 999999))
 
         session["otp"] = otp
         session["reset_email"] = email
@@ -366,13 +366,19 @@ Do not share this OTP with anyone.
         except Exception as e:
 
             flash("Unable to send OTP.", "error")
-
             print("❌ Brevo Error:", e)
 
             cursor.close()
             conn.close()
 
             return render_template("forgot_password.html")
+
+        cursor.close()
+        conn.close()
+
+        return redirect(url_for("verify_otp"))
+
+    return render_template("forgot_password.html")
 
 @app.route("/logout")
 def logout():
