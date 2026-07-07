@@ -14,8 +14,8 @@ import time
 
 load_dotenv()
 
-EMAIL_USER = os.getenv("EMAIL_USER")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+BREVO_EMAIL = os.getenv("BREVO_EMAIL")
+BREVO_SMTP_KEY = os.getenv("BREVO_SMTP_KEY")
 
 
 app = Flask(__name__)
