@@ -1,8 +1,23 @@
+# Python Cache
 __pycache__/
 *.pyc
+
+# Environment Variables
 .env
+
+# Virtual Environment
 venv/
+
+# IDE Files
 .idea/
 .vscode/
+
+# Flask Instance
 instance/
+
+# SQLite Database
 *.db
+
+# Local Utility Scripts
+create_admin.py
+check_db.py

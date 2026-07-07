@@ -21,9 +21,6 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 @app.route("/")
 def home():
-    print("✅ SQLite Connected Successfully!")
-
-    conn.close()
     return render_template("index.html")
 
 def send_email(name, email, subject, message):
@@ -121,7 +118,7 @@ def admin():
 
     # Total Messages
     cursor.execute("SELECT COUNT(*) FROM contact_messages")
-    otal_messages = cursor.fetchone()[0]
+    total_messages = cursor.fetchone()[0]
 
     # Today's Messages
     cursor.execute("""
@@ -185,7 +182,7 @@ def delete_message(id):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM contact_messages WHERE id=%s", (id,))
+    cursor.execute("DELETE FROM contact_messages WHERE id=?", (id,))
     conn.commit()
 
     cursor.close()
@@ -243,14 +240,15 @@ def profile():
         return redirect(url_for("login"))
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     cursor.execute(
-        "SELECT * FROM admin WHERE id=%s",
+        "SELECT * FROM admin WHERE id=?",
         (session["admin_id"],)
     )
 
-    admin = cursor.fetchone()
+    row = cursor.fetchone()
+    admin = dict(row) if row else None
 
     if request.method == "POST":
 
@@ -272,9 +270,9 @@ def profile():
             hashed_password = generate_password_hash(new_password)
 
             cursor.execute("""
-                UPDATE admin
-                SET username=%s, password=%s
-                WHERE id=%s
+            UPDATE admin
+            SET username=?, password=?
+            WHERE id=?
             """, (username, hashed_password, session["admin_id"]))
 
             conn.commit()
@@ -301,14 +299,15 @@ def forgot_password():
         email = request.form["email"].strip()
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT * FROM admin WHERE email=%s",
+            "SELECT * FROM admin WHERE email=?",
             (email,)
         )
 
-        admin = cursor.fetchone()
+        row = cursor.fetchone()
+        admin = dict(row) if row else None
 
         if not admin:
 
@@ -392,7 +391,7 @@ def export_csv():
         return redirect(url_for("login"))
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     cursor.execute("""
         SELECT id, name, email, subject, message, created_at
@@ -400,7 +399,8 @@ def export_csv():
         ORDER BY created_at DESC
     """)
 
-    messages = cursor.fetchall()
+    rows = cursor.fetchall()
+    messages = [dict(row) for row in rows]
 
     cursor.close()
     conn.close()
@@ -571,14 +571,16 @@ def reset_password():
         cursor.execute(
             """
             UPDATE admin
-            SET password=%s
-            WHERE email=%s
+            SET password=?
+            WHERE email=?
             """,
             (hashed_password, session["reset_email"])
         )
 
         conn.commit()
-
+        print("Password Updated Successfully")
+        print(session["reset_email"])
+        
         cursor.close()
         conn.close()
 
