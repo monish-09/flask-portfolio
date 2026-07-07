@@ -16,7 +16,10 @@ load_dotenv()
 EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
+
 app = Flask(__name__)
+
+create_database()
 app.secret_key = os.getenv("SECRET_KEY")
 
 
