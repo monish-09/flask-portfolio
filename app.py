@@ -353,14 +353,31 @@ Do not share this OTP with anyone.
 
         try:
 
+            print("1. Connecting...")
+
             server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
+
+            print("2. Connected")
+
             server.ehlo()
+
+            print("3. EHLO OK")
+
             server.starttls()
+
+            print("4. STARTTLS OK")
+
             server.ehlo()
+
+            print("5. Second EHLO OK")
 
             server.login(BREVO_LOGIN, BREVO_SMTP_KEY)
 
+            print("6. Login OK")
+
             server.send_message(msg)
+
+            print("7. Email Sent")
 
             server.quit()
 
