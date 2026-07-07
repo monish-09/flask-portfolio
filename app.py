@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session,Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import get_connection
+from create_db import create_database
 import csv
 import math
 import os
@@ -595,4 +596,5 @@ def reset_password():
     return render_template("reset_password.html")
 
 if __name__ == "__main__":
+    create_database()
     app.run(debug=True)
