@@ -47,8 +47,12 @@ Message:
     msg["To"] = EMAIL_USER
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
+
+        
 
         server.login(EMAIL_USER, EMAIL_PASSWORD)
 
@@ -350,9 +354,10 @@ Do not share this OTP with anyone.
 
         try:
 
-            server = smtplib.SMTP("smtp.gmail.com",587)
-
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+            server.ehlo()
             server.starttls()
+            server.ehlo()
 
             server.login(EMAIL_USER, EMAIL_PASSWORD)
 
@@ -531,8 +536,10 @@ Do not share this OTP with anyone.
 
     try:
 
-        server = smtplib.SMTP("smtp.gmail.com",587)
+        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
 
         server.login(EMAIL_USER, EMAIL_PASSWORD)
 
