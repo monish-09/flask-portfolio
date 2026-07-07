@@ -16,19 +16,14 @@ EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 app = Flask(__name__)
-app.secret_key = "portfolio_secret"
+app.secret_key = os.getenv("SECRET_KEY")
 
 
 @app.route("/")
 def home():
-
-    conn = get_connection()
-
-    if conn.is_connected():
-        print("✅ Database Connected Successfully!")
+    print("✅ SQLite Connected Successfully!")
 
     conn.close()
-
     return render_template("index.html")
 
 def send_email(name, email, subject, message):
@@ -89,8 +84,10 @@ def contact():
 
     sql = """
     INSERT INTO contact_messages(name,email,subject,message)
-    VALUES(%s,%s,%s,%s)
+    VALUES(?,?,?,?)
     """
+
+
 
     cursor.execute(sql, (name, email, subject, message))
     conn.commit()
@@ -120,19 +117,20 @@ def admin():
     offset = (page - 1) * per_page
 
     conn = get_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     # Total Messages
-    cursor.execute("SELECT COUNT(*) AS total FROM contact_messages")
-    total_messages = cursor.fetchone()["total"]
+    cursor.execute("SELECT COUNT(*) FROM contact_messages")
+    otal_messages = cursor.fetchone()[0]
 
     # Today's Messages
     cursor.execute("""
-        SELECT COUNT(*) AS today
-        FROM contact_messages
-        WHERE DATE(created_at) = CURDATE()
+    SELECT COUNT(*)
+    FROM contact_messages
+    WHERE DATE(created_at)=DATE('now')
     """)
-    today_messages = cursor.fetchone()["today"]
+
+    today_messages = cursor.fetchone()[0]
 
     # Search
     if search:
@@ -140,9 +138,9 @@ def admin():
         cursor.execute("""
         SELECT *
         FROM contact_messages
-        WHERE name LIKE %s OR email LIKE %s
+        WHERE name LIKE ? OR email LIKE ?
         ORDER BY created_at DESC
-        LIMIT %s OFFSET %s
+        LIMIT ? OFFSET ?
         """, (f"%{search}%", f"%{search}%", per_page, offset))
 
     else:
@@ -151,10 +149,15 @@ def admin():
         SELECT *
         FROM contact_messages
         ORDER BY created_at DESC
-        LIMIT %s OFFSET %s
+        LIMIT ? OFFSET ?
         """, (per_page, offset))
 
-    contact_messages = cursor.fetchall()
+    rows = cursor.fetchall()
+
+    contact_messages = []
+
+    for row in rows:
+        contact_messages.append(dict(row))
 
     total_pages = math.ceil(total_messages / per_page)
 
@@ -203,14 +206,16 @@ def login():
         password = request.form["password"]
 
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
 
         cursor.execute(
-            "SELECT * FROM admin WHERE username=%s",
-            (username,)
+        "SELECT * FROM admin WHERE username=?",
+        (username,)
         )
 
-        admin = cursor.fetchone()
+        row = cursor.fetchone()
+
+        admin = dict(row) if row else None
 
         cursor.close()
         conn.close()
