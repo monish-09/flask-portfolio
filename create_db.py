@@ -5,7 +5,11 @@ from werkzeug.security import generate_password_hash
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "portfolio.db")
 
+
 def create_database():
+    print("🚀 create_database() called")
+    print("DB Path:", DB_PATH)
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -44,5 +48,6 @@ def create_database():
             generate_password_hash("Monish954876")
         ))
 
+    print("✅ Database initialized successfully")
     conn.commit()
     conn.close()
