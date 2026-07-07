@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import random
 import time
 
+
 load_dotenv()
 
 EMAIL_USER = os.getenv("EMAIL_USER")
@@ -43,18 +44,16 @@ Message:
     msg = MIMEText(body)
 
     msg["Subject"] = "New Portfolio Contact"
-    msg["From"] = EMAIL_USER
-    msg["To"] = EMAIL_USER
+    msg["From"] = BREVO_EMAIL
+    msg["To"] = BREVO_EMAIL
 
     try:
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+        server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
         server.ehlo()
         server.starttls()
         server.ehlo()
 
-        
-
-        server.login(EMAIL_USER, EMAIL_PASSWORD)
+        server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
 
         server.send_message(msg)
 
@@ -65,7 +64,6 @@ Message:
     except Exception as e:
 
         print("❌ Email Error:", e)
-
 
 @app.route("/contact", methods=["POST"])
 def contact():
@@ -349,17 +347,17 @@ Do not share this OTP with anyone.
         msg = MIMEText(body)
 
         msg["Subject"] = "Password Reset OTP"
-        msg["From"] = EMAIL_USER
+        msg["From"] = BREVO_EMAIL
         msg["To"] = email
 
         try:
 
-            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+            server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
             server.ehlo()
             server.starttls()
             server.ehlo()
 
-            server.login(EMAIL_USER, EMAIL_PASSWORD)
+            server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
 
             server.send_message(msg)
 
@@ -369,19 +367,12 @@ Do not share this OTP with anyone.
 
             flash("Unable to send OTP.", "error")
 
-            print(e)
+            print("❌ Brevo Error:", e)
 
             cursor.close()
             conn.close()
 
             return render_template("forgot_password.html")
-
-        cursor.close()
-        conn.close()
-
-        return redirect(url_for("verify_otp"))
-
-    return render_template("forgot_password.html")
 
 @app.route("/logout")
 def logout():
@@ -531,17 +522,17 @@ Do not share this OTP with anyone.
     msg = MIMEText(body)
 
     msg["Subject"] = "New Password Reset OTP"
-    msg["From"] = EMAIL_USER
+    msg["From"] = BREVO_EMAIL
     msg["To"] = email
 
     try:
 
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=30)
+        server = smtplib.SMTP("smtp-relay.brevo.com", 587, timeout=30)
         server.ehlo()
         server.starttls()
         server.ehlo()
 
-        server.login(EMAIL_USER, EMAIL_PASSWORD)
+        server.login(BREVO_EMAIL, BREVO_SMTP_KEY)
 
         server.send_message(msg)
 
@@ -551,7 +542,7 @@ Do not share this OTP with anyone.
 
     except Exception as e:
 
-        print(e)
+        print("❌ Brevo Error:", e)
 
         flash("Unable to resend OTP.", "error")
 
